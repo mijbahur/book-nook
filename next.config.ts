@@ -1,18 +1,24 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
-  reactCompiler: true,
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
+    /* config options here */
+    cacheComponents: true,
+    partialPrefetching: true,
+    reactCompiler: true,
+    images: {
+        remotePatterns: [
+            { protocol: "https", hostname: "images.pexels.com" },
+            { protocol: "https", hostname: "covers.openlibrary.org" },
+        ],
     },
-  },
+    turbopack: {
+        rules: {
+            "*.css": {
+                loaders: ["@tailwindcss/turbopack"],
+                as: "*.css",
+            },
+        },
+    },
 };
 
 export default nextConfig;
