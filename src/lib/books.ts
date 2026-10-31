@@ -42,3 +42,30 @@ export async function getLatestBooks(limit = 6): Promise<BooksResult> {
         return { books: [], error: true };
     }
 }
+export async function getAllBooks(): Promise<BooksResult> {
+    try {
+        const books = await request<Book[]>(
+            `/books`,
+        );
+
+        return { books, error: false };
+    } catch (error) {
+        console.error("Failed to load books:", error);
+        return { books: [], error: true };
+    }
+}
+
+export async function getBookById(id: string): Promise<Book | null> {
+  try {
+    const data = await request<Book>(`/book/${encodeURIComponent(id)}`);
+    return data;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return null;
+    }
+
+    console.error(`Failed to load book ${id}:`, error);
+    return null;
+  }
+}
+

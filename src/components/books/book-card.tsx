@@ -18,14 +18,13 @@ type BookCardProps = {
 export function BookCard({ book, priority = false }: BookCardProps) {
     return (
         <Card className="group h-full gap-4 overflow-hidden pt-0">
-            <div className="relative aspect-2/3 w-full overflow-hidden bg-muted">
+            <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
                 <Image
                     src={book.image}
                     alt={`Cover of ${book.title}`}
                     fill
                     priority={priority}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    loading="lazy"
                     className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
                 <span className="absolute top-3 left-3 rounded-full bg-background/90 px-2.5 py-1 text-xs font-semibold text-foreground shadow-sm backdrop-blur">
