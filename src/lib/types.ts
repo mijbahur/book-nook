@@ -25,3 +25,22 @@ export type Book = {
     createdAt: string;
     totalCopies: number;
 };
+
+export interface IBorrow {
+    _id: string;
+    bookId: string;
+    bookTitle: string;
+    bookImage: string;
+    userName: string;
+    userEmail: string;
+    borrowDate: string;
+    /** Due date, set by the backend to `borrowDate + 14 days`. */
+    returnDate: string;
+}
+
+/**
+ * What the browser sends when borrowing. The dates are deliberately excluded:
+ * the backend stamps `borrowDate` and computes `returnDate`, so a borrower
+ * cannot hand themselves a longer deadline.
+ */
+export type NewBorrow = Omit<IBorrow, "_id" | "borrowDate" | "returnDate">;

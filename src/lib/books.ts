@@ -1,4 +1,4 @@
-import type { Book, BookCategory } from "@/lib/types";
+import type { Book, BookCategory, IBorrow, NewBorrow } from "@/lib/types";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
 
@@ -30,6 +30,18 @@ class ApiError extends Error {
 
 export { ApiError };
 
+async function errorMessage(response: Response): Promise<string | undefined> {
+    try {
+        const data = (await response.json()) as {
+            message?: string;
+            error?: string;
+        };
+        return data.message ?? data.error;
+    } catch {
+        return undefined;
+    }
+}
+
 async function request<T>(path: string): Promise<T> {
     const response = await fetch(`${API_URL}${path}`, {
         cache: "no-store",
@@ -37,7 +49,7 @@ async function request<T>(path: string): Promise<T> {
     });
 
     if (!response.ok) {
-        throw new ApiError(response.status);
+        throw new ApiError(response.status, await errorMessage(response));
     }
 
     if (response.status === 204) {
@@ -49,17 +61,17 @@ async function request<T>(path: string): Promise<T> {
 
 export async function createBook(book: NewBook): Promise<void> {
     const response = await fetch(`${API_URL}/add-book`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(book),
-            });
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(book),
+    });
 
     if (!response.ok) {
-        throw new ApiError(response.status);
+        throw new ApiError(response.status, await errorMessage(response));
     }
-     return response.json();
+    return response.json();
 }
 /**
  * Identifies the reader for owner-scoped writes.
@@ -78,8 +90,6 @@ function ownerHeaders(ownerEmail: string): Record<string, string> {
 function sameEmail(a: string | undefined, b: string): boolean {
     return (a ?? "").trim().toLowerCase() === b.trim().toLowerCase();
 }
-
-
 
 export async function getLatestBooks(limit = 6): Promise<BooksResult> {
     try {
@@ -105,7 +115,9 @@ export async function getAllBooks(): Promise<BooksResult> {
     }
 }
 
-export async function getBooksByOwner(ownerEmail: string): Promise<BooksResult> {
+export async function getBooksByOwner(
+    ownerEmail: string,
+): Promise<BooksResult> {
     try {
         const books = await request<Book[]>(
             `/books?ownerEmail=${encodeURIComponent(ownerEmail)}`,
@@ -125,13 +137,22 @@ export async function getBooksByOwner(ownerEmail: string): Promise<BooksResult> 
 
 export async function getBookById(id: string): Promise<Book | null> {
     try {
-        const data = await request<Book>(`/book/${encodeURIComponent(id)}`);
-        return data;
+        return await request<Book>(`/book/${encodeURIComponent(id)}`);
     } catch (error) {
-        if (error instanceof ApiError && error.status === 404) {
-            return null;
+        // Some deployments answer `/book/:id` with an empty 200 body. Rather
+        // than failing the whole page, fall back to the collection below.
+        if (!(error instanceof ApiError && error.status === 404)) {
+            console.warn(
+                `Direct lookup for book ${id} failed, falling back to /books:`,
+                error,
+            );
         }
+    }
 
+    try {
+        const books = await request<Book[]>(`/books`);
+        return books.find((book) => book._id === id) ?? null;
+    } catch (error) {
         console.error(`Failed to load book ${id}:`, error);
         return null;
     }
@@ -143,18 +164,18 @@ export async function updateBook(
     ownerEmail: string,
 ): Promise<Book> {
     const response = await fetch(`${API_URL}/book/${encodeURIComponent(id)}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    ...ownerHeaders(ownerEmail),
-                },
-                body: JSON.stringify(book),
-            });
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            ...ownerHeaders(ownerEmail),
+        },
+        body: JSON.stringify(book),
+    });
 
     if (!response.ok) {
-        throw new ApiError(response.status);
+        throw new ApiError(response.status, await errorMessage(response));
     }
-     return response.json();
+    return response.json();
 }
 
 export async function deleteBook(
@@ -162,12 +183,74 @@ export async function deleteBook(
     ownerEmail: string,
 ): Promise<void> {
     const response = await fetch(`${API_URL}/book/${encodeURIComponent(id)}`, {
-                method: "DELETE",
-                headers: ownerHeaders(ownerEmail),
-            });
+        method: "DELETE",
+        headers: ownerHeaders(ownerEmail),
+    });
 
     if (!response.ok) {
-        throw new ApiError(response.status);
+        throw new ApiError(response.status, await errorMessage(response));
     }
-     return response.json();
+    return response.json();
+}
+
+//borrows
+export async function createBorrow(borrow: NewBorrow): Promise<IBorrow> {
+    const response = await fetch(`${API_URL}/borrows`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-User-Email": borrow.userEmail,
+        },
+        body: JSON.stringify(borrow),
+    });
+
+    if (!response.ok) {
+        throw new ApiError(response.status, await errorMessage(response));
+    }
+    return response.json();
+}
+
+export type BorrowsResult = {
+    borrows: IBorrow[];
+    error: boolean;
+};
+export async function getBorrowsByUser(
+    userEmail: string,
+): Promise<BorrowsResult> {
+    try {
+        const borrows = await request<IBorrow[]>(
+            `/borrows?userEmail=${encodeURIComponent(userEmail)}`,
+        );
+
+        return {
+            borrows: borrows.filter((borrow) =>
+                sameEmail(borrow.userEmail, userEmail),
+            ),
+            error: false,
+        };
+    } catch (error) {
+        console.error("Failed to load your borrows:", error);
+        return { borrows: [], error: true };
+    }
+}
+
+export async function returnBorrow(
+    id: string,
+    userEmail: string,
+): Promise<void> {
+    const response = await fetch(
+        `${API_URL}/borrow/${encodeURIComponent(id)}`,
+        {
+            method: "DELETE",
+            headers: {
+                // Temporary stand-in for the authenticated reader.
+                "X-User-Email": userEmail,
+            },
+        },
+    );
+
+    if (!response.ok) {
+        throw new ApiError(response.status, await errorMessage(response));
+    }
+    return response.json();
 }

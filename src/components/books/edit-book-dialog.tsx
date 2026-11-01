@@ -21,6 +21,7 @@ import {
     bookFormFromBook,
     type BookFormValues,
 } from "@/components/books/book-fields";
+import { useRouter } from "next/navigation";
 
 type EditBookDialogProps = {
     book: Book;
@@ -35,6 +36,7 @@ export function EditBookDialog({
     onOpenChange,
     onSaved,
 }: EditBookDialogProps) {
+    const router = useRouter();
     const [form, setForm] = useState<BookFormValues>(() =>
         bookFormFromBook(book),
     );
@@ -52,25 +54,25 @@ export function EditBookDialog({
         setIsSaving(true);
 
         try {
+            const changes = {
+                title: form.title.trim(),
+                author: form.author.trim(),
+                category: form.category,
+                image: form.image.trim(),
+                description: form.description.trim(),
+                totalCopies: Math.max(1, Number(form.totalCopies) || 1),
+            };
+
             const saved = await updateBook(
                 book._id,
-                {
-                    title: form.title.trim(),
-                    author: form.author.trim(),
-                    category: form.category,
-                    image: form.image.trim(),
-                    description: form.description.trim(),
-                    totalCopies: Math.max(1, Number(form.totalCopies) || 1),
-                },
+                changes,
                 book.ownerEmail,
             );
 
-            console.log("Saved book:", saved);
-            console.log("ownerEmail:", saved.ownerEmail);
-
             toast.success("Book updated successfully!");
-            onSaved(saved);
+            onSaved({ ...saved, ...changes });
             onOpenChange(false);
+            router.refresh();
         } catch (error) {
             toast.error(
                 error instanceof Error

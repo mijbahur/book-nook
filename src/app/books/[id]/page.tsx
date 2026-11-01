@@ -2,12 +2,14 @@ import { Metadata } from "next";
 import { ArrowLeft, BookOpen, Library, Loader2, UserRound } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getBookById } from "@/lib/books";
+import { getCurrentUser, isBookOwner } from "@/lib/current-user";
 import { io } from "next/cache";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import { Suspense } from "react";
+import { BorrowBookDialog } from "@/components/borrows/borrow-book-dialog";
 
 export const metadata: Metadata = {
     title: "Book Details",
@@ -37,7 +39,10 @@ function BookDetailSkeleton() {
 async function BookDetail({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     await io();
-    const book = await getBookById(id);
+    const [book, user] = await Promise.all([
+        getBookById(id),
+        getCurrentUser(),
+    ]);
 
     if (!book) {
         notFound();
@@ -114,16 +119,39 @@ async function BookDetail({ params }: { params: Promise<{ id: string }> }) {
                     </dl>
 
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                        <Link
-                            href="/login"
-                            className={buttonVariants({
-                                size: "lg",
-                                className: "h-11 rounded-full px-6",
-                            })}
-                        >
-                            <BookOpen className="size-4" aria-hidden="true" />
-                            Login to borrow
-                        </Link>
+                        {!user ? (
+                            <Link
+                                href="/login"
+                                className={buttonVariants({
+                                    size: "lg",
+                                    className: "h-11 rounded-full px-6",
+                                })}
+                            >
+                                <BookOpen className="size-4" aria-hidden="true" />
+                                Login to borrow
+                            </Link>
+                        ) : isBookOwner(book, user) ? (
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                className="h-11 rounded-full px-6 bg-card"
+                                disabled
+                            >
+                                <BookOpen className="size-4" aria-hidden="true" />
+                                This is your book
+                            </Button>
+                        ) : book.totalCopies < 1 ? (
+                            <Button
+                                size="lg"
+                                className="h-11 rounded-full px-6"
+                                disabled
+                            >
+                                <BookOpen className="size-4" aria-hidden="true" />
+                                No copies available
+                            </Button>
+                        ) : (
+                            <BorrowBookDialog book={book} user={user} />
+                        )}
                         <Link
                             href="/books"
                             className={buttonVariants({

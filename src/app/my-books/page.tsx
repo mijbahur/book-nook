@@ -84,7 +84,11 @@ async function MyBooksContent() {
                     </p>
                 </div>
             ) : (
-                <MyBooksTable user={user} books={books} />
+                <MyBooksTable
+                    key={JSON.stringify(books)}
+                    user={user}
+                    books={books}
+                />
             )}
         </section>
     );
