@@ -4,23 +4,27 @@ import Link from "next/link";
 import { SheetClose } from "@/components/ui/sheet";
 
 const links = [
-    { href: "/", label: "Home" },
-    { href: "/books", label: "All Books" },
-    { href: "/my-books", label: "My Books" },
+    { href: "/", label: "Home", active: true },
+    { href: "/books", label: "All Books", active: true },
+    { href: "/my-books", label: "My Books", active: false },
+    { href: "/add-book", label: "Add Book", active: false },
 ];
 
 type NavLinksProps = {
     mobile?: boolean;
+    isLoggedIn: boolean;
 };
 
-export function NavLinks({ mobile = false }: NavLinksProps) {
+export function NavLinks({ mobile = false, isLoggedIn }: NavLinksProps) {
+    const visibleLinks = links.filter((link) => link.active || isLoggedIn);
+
     if (mobile) {
         return (
             <nav
                 className="flex flex-col gap-1 px-4"
                 aria-label="Mobile navigation"
             >
-                {links.map((link) => (
+                {visibleLinks.map((link) => (
                     <SheetClose
                         key={link.href}
                         nativeButton={false}
@@ -43,7 +47,7 @@ export function NavLinks({ mobile = false }: NavLinksProps) {
             className="hidden items-center gap-1 md:flex"
             aria-label="Main navigation"
         >
-            {links.map((link) => (
+            {visibleLinks.map((link) => (
                 <Link
                     key={link.href}
                     href={link.href}

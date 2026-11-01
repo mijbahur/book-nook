@@ -4,12 +4,25 @@ import Link from "next/link";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { SheetClose } from "@/components/ui/sheet";
+import {
+    Popover,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTitle,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
 
 type AuthActionsProps = {
-    user: {
-        name: string;
-    } | undefined;
+    user:
+        | {
+              name: string;
+              email: string;
+              image?: string | null;
+          }
+        | undefined;
     refetch: () => void;
     mobile?: boolean;
 };
@@ -30,10 +43,60 @@ export function AuthActions({
                 className={
                     mobile
                         ? "mt-auto flex flex-col gap-2 border-t p-4"
-                        : "hidden items-center gap-6 md:flex"
+                        : "hidden items-center gap-2 md:flex"
                 }
             >
-                <span className="text-sm font-medium text-muted-foreground text-center ">
+                <Popover>
+                    <PopoverTrigger
+                        render={
+                            <button
+                                type="button"
+                                aria-label="Open account menu"
+                                className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+                            >
+                                <Avatar className="size-10">
+                                    <AvatarImage
+                                        referrerPolicy="no-referrer"
+                                        src={user?.image ?? undefined}
+                                    />
+                                    <AvatarFallback className="bg-primary text-primary-foreground font-bold">
+                                        {user?.name.charAt(0)}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </button>
+                        }
+                    ></PopoverTrigger>
+                    <PopoverContent>
+                        <PopoverHeader className="flex flex-col gap-4 p-4">
+                            <PopoverTitle>{user?.name}</PopoverTitle>
+
+                            <div className="flex flex-col gap-3">
+                                <p className="text-sm text-muted-foreground">
+                                    {user?.email}
+                                </p>
+
+                                <Link
+                                    href="/profile"
+                                    className={buttonVariants({
+                                        variant: "outline",
+                                        size: "sm",
+                                    })}
+                                >
+                                    Edit Profile
+                                </Link>
+
+                                <Button
+                                    variant="destructive"
+                                    size={mobile ? "lg" : "sm"}
+                                    onClick={handleSignOut}
+                                >
+                                    Sign out
+                                </Button>
+                            </div>
+                        </PopoverHeader>
+                    </PopoverContent>
+                </Popover>
+                {/* <span className="text-sm font-medium text-muted-foreground text-center ">
                     Signed in as {user.name}
                 </span>
 
@@ -43,7 +106,7 @@ export function AuthActions({
                     onClick={handleSignOut}
                 >
                     Sign out
-                </Button>
+                </Button> */}
             </div>
         );
     }

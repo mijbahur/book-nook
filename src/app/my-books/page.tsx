@@ -39,8 +39,7 @@ function MyBooksSkeleton() {
 }
 
 async function MyBooksContent() {
-    // Private route: the guard runs here, so nothing below can render for a
-    // visitor who is not signed in.
+    
     const user = await requireCurrentUser();
 
     await io();

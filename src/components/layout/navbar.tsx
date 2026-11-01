@@ -61,7 +61,7 @@ export function Navbar() {
             ) : (
                 <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                     <Logo />
-                    <NavLinks />
+                    <NavLinks isLoggedIn={Boolean(user)} />
 
                     <AuthActions user={user} refetch={refetch} />
 
@@ -90,7 +90,7 @@ export function Navbar() {
                                 </SheetTitle>
                             </SheetHeader>
 
-                            <NavLinks mobile />
+                            <NavLinks mobile isLoggedIn={Boolean(user)} />
 
                             <AuthActions user={user} refetch={refetch} mobile />
                         </SheetContent>

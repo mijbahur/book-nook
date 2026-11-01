@@ -105,13 +105,6 @@ export async function getAllBooks(): Promise<BooksResult> {
     }
 }
 
-/**
- * Books added by one reader.
- *
- * The `ownerEmail` query parameter lets the backend filter server-side. The
- * result is also filtered here, so the page can never leak somebody else's
- * books even if the backend ignores the parameter.
- */
 export async function getBooksByOwner(ownerEmail: string): Promise<BooksResult> {
     try {
         const books = await request<Book[]>(
