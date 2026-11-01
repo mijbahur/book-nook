@@ -8,6 +8,11 @@ export const BOOK_CATEGORIES = [
 
 export type BookCategory = (typeof BOOK_CATEGORIES)[number];
 
+export type CurrentUser = {
+    name: string;
+    email: string;
+};
+
 export type Book = {
     _id: string;
     title: string;

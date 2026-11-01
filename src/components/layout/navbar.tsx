@@ -14,6 +14,7 @@ import { Logo } from "@/components/layout/logo";
 const links = [
     { href: "/", label: "Home" },
     { href: "/books", label: "All Books" },
+    { href: "/my-books", label: "My Books" },
 ];
 
 export function Navbar() {
