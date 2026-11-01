@@ -7,6 +7,8 @@ export type BooksResult = {
     error: boolean;
 };
 
+export type NewBook = Omit<Book, "_id">;
+
 class ApiError extends Error {
     status: number;
 
@@ -28,6 +30,21 @@ async function request<T>(path: string): Promise<T> {
     }
 
     return response.json() as Promise<T>;
+}
+
+export async function createBook(book: NewBook): Promise<void> {
+    const response = await fetch(`${API_URL}/add-book`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(book),
+            });
+
+    if (!response.ok) {
+        throw new ApiError(response.status);
+    }
+     return response.json();
 }
 
 export async function getLatestBooks(limit = 6): Promise<BooksResult> {
@@ -68,4 +85,3 @@ export async function getBookById(id: string): Promise<Book | null> {
     return null;
   }
 }
-
