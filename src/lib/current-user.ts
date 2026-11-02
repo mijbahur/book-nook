@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import type { Book, CurrentUser } from "@/lib/types";
+import { sameEmail } from "@/lib/utils";
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
     const session = await auth.api.getSession({
@@ -18,6 +19,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
         email: session.user.email,
     };
 }
+
 export async function requireCurrentUser(): Promise<CurrentUser> {
     const user = await getCurrentUser();
 
@@ -35,6 +37,3 @@ export function isBookOwner(
     return sameEmail(book.ownerEmail, user.email);
 }
 
-export function sameEmail(a: string | undefined | null, b: string): boolean {
-    return (a ?? "").trim().toLowerCase() === b.trim().toLowerCase();
-}

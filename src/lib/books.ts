@@ -1,4 +1,5 @@
 import type { Book, BookCategory, IBorrow, NewBorrow } from "@/lib/types";
+import { sameEmail } from "@/lib/utils";
 
 const API_URL = process.env.API_URL ?? "http://localhost:8000";
 
@@ -85,10 +86,6 @@ function ownerHeaders(ownerEmail: string): Record<string, string> {
         "Content-Type": "application/json",
         "X-User-Email": ownerEmail,
     };
-}
-
-function sameEmail(a: string | undefined, b: string): boolean {
-    return (a ?? "").trim().toLowerCase() === b.trim().toLowerCase();
 }
 
 export async function getLatestBooks(limit = 6): Promise<BooksResult> {

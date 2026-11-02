@@ -4,6 +4,7 @@ import {
     NewArrivals,
     NewArrivalsSkeleton,
 } from "@/components/home/new-arrivals";
+import { TopCategories } from "@/components/home/top-categories";
 import { Suspense } from "react";
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
                 <NewArrivals />
             </Suspense>
             <HowItWorks />
+            <TopCategories />
         </div>
     );
 }
