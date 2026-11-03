@@ -69,8 +69,7 @@ export function EditBookDialog({
             const saved = await updateBook(
                 book._id,
                 changes,
-                book.ownerEmail,
-                token
+                token,
             );
 
             toast.success("Book updated successfully!");

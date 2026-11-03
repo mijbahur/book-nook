@@ -38,7 +38,7 @@ export function DeleteBookDialog({
         const token = await getTokenFromClient();
 
         try {
-            await deleteBook(book._id, book.ownerEmail, token);
+            await deleteBook(book._id, token);
 
             toast.success(`“${book.title}” was deleted.`);
             onDeleted(book._id);

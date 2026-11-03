@@ -1,6 +1,6 @@
 import type { Book, BookCategory, IBorrow, NewBorrow } from "@/lib/types";
 import { sameEmail } from "@/lib/utils";
-const API_URL = process.env.API_URL ?? "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export type BooksResult = {
     books: Book[];
     error: boolean;
@@ -49,21 +49,21 @@ async function errorMessage(response: Response): Promise<string | undefined> {
 export async function createBook(book: NewBook, token?: string) {
     const res = await fetch(`${API_URL}/add-book`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" ,
-        authorization: `Bearer ${token}`,                
+        headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(book),
     });
     if (!res.ok) throw new ApiError(res.status, await errorMessage(res));
     return res.json();
 }
-    
+
 export async function getLatestBooks(limit = 6): Promise<BooksResult> {
     try {
         console.log(API_URL);
         const res = await fetch(
             `${API_URL}/books?limit=${limit}&sort=createdAt`,
-            { cache: "no-store" },
         );
         if (!res.ok) throw new ApiError(res.status, await errorMessage(res));
         const books: Book[] = await res.json();
@@ -90,14 +90,14 @@ export async function getAllBooks(): Promise<BooksResult> {
 
 export async function getBooksByOwner(
     ownerEmail: string,
-    token?: string
+    token?: string,
 ): Promise<BooksResult> {
     try {
         const res = await fetch(
             `${API_URL}/books?ownerEmail=${encodeURIComponent(ownerEmail)}`,
-            { 
+            {
                 cache: "no-store",
-                headers: token ? { "Authorization": `Bearer ${token}` } : {},
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
             },
         );
         if (!res.ok) throw new ApiError(res.status, await errorMessage(res));
@@ -116,12 +116,9 @@ export async function getBooksByOwner(
 
 export async function getBookById(id: string): Promise<Book | null> {
     try {
-        const res = await fetch(
-            `${API_URL}/book/${encodeURIComponent(id)}`,
-            {
-                cache: "no-store",
-            },
-        );
+        const res = await fetch(`${API_URL}/book/${encodeURIComponent(id)}`, {
+            cache: "no-store",
+        });
         if (!res.ok) throw new ApiError(res.status, await errorMessage(res));
         return await res.json();
     } catch (error) {
@@ -133,48 +130,44 @@ export async function getBookById(id: string): Promise<Book | null> {
 export async function updateBook(
     id: string,
     book: BookUpdate,
-    ownerEmail: string,
-    token?: string
+    token?: string,
 ): Promise<Book> {
-    const res = await fetch(
-        `${API_URL}/book/${encodeURIComponent(id)}`,
-        {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "X-User-Email": ownerEmail,
-                "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify(book),
+    const res = await fetch(`${API_URL}/book/${encodeURIComponent(id)}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
         },
-    );
+        body: JSON.stringify(book),
+    });
     if (!res.ok) throw new ApiError(res.status, await errorMessage(res));
     return res.json();
 }
 
-export async function deleteBook(id: string, ownerEmail: string, token?: string) {
-    const res = await fetch(
-        `${API_URL}/book/${encodeURIComponent(id)}`,
-        {
-            method: "DELETE",
-            headers: {
-                "X-User-Email": ownerEmail,
-                "Authorization": `Bearer ${token}`,
-            },
+export async function deleteBook(
+    id: string,
+    token?: string,
+) {
+    const res = await fetch(`${API_URL}/book/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
         },
-    );
+    });
     if (!res.ok) throw new ApiError(res.status, await errorMessage(res));
     return res.json();
 }
 
 // ---------- borrows ----------
-export async function createBorrow(borrow: NewBorrow, token?: string): Promise<IBorrow> {
+export async function createBorrow(
+    borrow: NewBorrow,
+    token?: string,
+): Promise<IBorrow> {
     const res = await fetch(`${API_URL}/borrows`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-            "X-User-Email": borrow.userEmail,
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(borrow),
     });
@@ -183,16 +176,16 @@ export async function createBorrow(borrow: NewBorrow, token?: string): Promise<I
 }
 
 export async function getBorrowsByUser(
-    userEmail: string, token?: string
+    userEmail: string,
+    token?: string,
 ): Promise<BorrowsResult> {
     try {
         const res = await fetch(
             `${API_URL}/borrows?userEmail=${encodeURIComponent(userEmail)}`,
-            { 
+            {
                 cache: "no-store",
-              headers: { authorization: `Bearer ${token}`, }
+                headers: { authorization: `Bearer ${token}` },
             },
-            
         );
         if (!res.ok) throw new ApiError(res.status, await errorMessage(res));
         const borrows: IBorrow[] = await res.json();
@@ -208,17 +201,16 @@ export async function getBorrowsByUser(
     }
 }
 
-export async function returnBorrow(id: string, userEmail: string, token?: string) {
-    const res = await fetch(
-        `${API_URL}/borrow/${encodeURIComponent(id)}`,
-        {
-            method: "DELETE",
-            headers: {
-                "X-User-Email": userEmail,
-                "Authorization": `Bearer ${token}`,
-            },
+export async function returnBorrow(
+    id: string,
+    token?: string,
+) {
+    const res = await fetch(`${API_URL}/borrow/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
         },
-    );
+    });
     if (!res.ok) throw new ApiError(res.status, await errorMessage(res));
     return res.json();
 }

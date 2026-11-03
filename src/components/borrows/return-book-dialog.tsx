@@ -38,7 +38,7 @@ export function ReturnBookDialog({
         const token = await getTokenFromClient();
 
         try {
-            await returnBorrow(borrow._id, borrow.userEmail, token);
+            await returnBorrow(borrow._id, token);
 
             toast.success(`“${borrow.bookTitle}” is back on the shelf.`);
             onReturned(borrow._id);
