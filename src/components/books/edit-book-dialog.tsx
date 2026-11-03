@@ -22,6 +22,7 @@ import {
     type BookFormValues,
 } from "@/components/books/book-fields";
 import { useRouter } from "next/navigation";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type EditBookDialogProps = {
     book: Book;
@@ -53,6 +54,8 @@ export function EditBookDialog({
 
         setIsSaving(true);
 
+        const token = await getTokenFromClient();
+
         try {
             const changes = {
                 title: form.title.trim(),
@@ -67,6 +70,7 @@ export function EditBookDialog({
                 book._id,
                 changes,
                 book.ownerEmail,
+                token
             );
 
             toast.success("Book updated successfully!");

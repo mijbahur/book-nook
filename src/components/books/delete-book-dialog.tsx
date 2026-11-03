@@ -16,6 +16,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type DeleteBookDialogProps = {
     book: Book;
@@ -34,9 +35,10 @@ export function DeleteBookDialog({
 
     const handleConfirm = async () => {
         setIsDeleting(true);
+        const token = await getTokenFromClient();
 
         try {
-            await deleteBook(book._id, book.ownerEmail);
+            await deleteBook(book._id, book.ownerEmail, token);
 
             toast.success(`“${book.title}” was deleted.`);
             onDeleted(book._id);

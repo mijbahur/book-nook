@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { GoogleButton } from "@/components/auth/google-button";
 import { authClient } from "@/lib/auth-client";
 
 const LoginPage = () => {
@@ -62,6 +63,19 @@ const LoginPage = () => {
                 </div>
 
                 <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm sm:p-8">
+                    <GoogleButton
+                        label="Login with Google"
+                        errorCallbackURL="/login"
+                    />
+
+                    <div className="my-6 flex items-center gap-3">
+                        <span className="h-px flex-1 bg-border" />
+                        <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+                            or
+                        </span>
+                        <span className="h-px flex-1 bg-border" />
+                    </div>
+
                     <form className="space-y-5" onSubmit={handleSubmit}>
                         {/* Email */}
                         <div className="space-y-2">
@@ -106,7 +120,7 @@ const LoginPage = () => {
                         <Button
                             type="submit"
                             size="lg"
-                            className="h-11 w-full rounded-full"
+                            className="h-11 w-full rounded-full cursor-pointer"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (

@@ -157,7 +157,7 @@ async function BookDetail({ params }: { params: Promise<{ id: string }> }) {
                             className={buttonVariants({
                                 variant: "outline",
                                 size: "lg",
-                                className: "h-11 rounded-full px-6 bg-card",
+                                className: "h-11 rounded-full px-6 bg-card cursor-pointer",
                             })}
                         >
                             Keep browsing

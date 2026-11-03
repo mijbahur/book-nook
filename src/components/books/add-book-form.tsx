@@ -13,6 +13,7 @@ import {
     emptyBookForm,
     type BookFormValues,
 } from "@/components/books/book-fields";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type AddBookFormProps = {
     user: CurrentUser;
@@ -32,6 +33,7 @@ export function AddBookForm({ user }: AddBookFormProps) {
         if (!form.category) return;
 
         setIsSubmitting(true);
+        const token = await getTokenFromClient();
 
         try {
             await createBook({
@@ -44,7 +46,7 @@ export function AddBookForm({ user }: AddBookFormProps) {
                 ownerName: user.name,
                 ownerEmail: user.email,
                 createdAt: new Date().toISOString(),
-            });
+            }, token);
 
             toast.success("Book added successfully!");
             setForm(emptyBookForm);

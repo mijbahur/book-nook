@@ -16,6 +16,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 type ReturnBookDialogProps = {
     borrow: IBorrow;
@@ -34,9 +35,10 @@ export function ReturnBookDialog({
 
     const handleConfirm = async () => {
         setIsReturning(true);
+        const token = await getTokenFromClient();
 
         try {
-            await returnBorrow(borrow._id, borrow.userEmail);
+            await returnBorrow(borrow._id, borrow.userEmail, token);
 
             toast.success(`“${borrow.bookTitle}” is back on the shelf.`);
             onReturned(borrow._id);
@@ -57,7 +59,7 @@ export function ReturnBookDialog({
             <DialogContent className="max-w-md" showCloseButton={false}>
                 <DialogHeader>
                     <span className="mb-1 inline-flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        <Undo2 className="size-5" aria-hidden="true" />
+                        <DialogClose><Undo2 className="size-5 cursor-pointer" aria-hidden="true" /></DialogClose>
                     </span>
                     <DialogTitle>Return this book?</DialogTitle>
                     <DialogDescription>
@@ -70,6 +72,7 @@ export function ReturnBookDialog({
                     <DialogClose
                         render={
                             <Button
+                                className="cursor-pointer"
                                 type="button"
                                 variant="outline"
                                 size="lg"
@@ -80,6 +83,7 @@ export function ReturnBookDialog({
                         Keep Borrowing
                     </DialogClose>
                     <Button
+                        className="cursor-pointer"
                         type="button"
                         size="lg"
                         onClick={handleConfirm}

@@ -9,6 +9,7 @@ import { requireCurrentUser } from "@/lib/current-user";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MyBooksTable } from "@/components/books/my-books-table";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 export const metadata: Metadata = {
     title: "My Books",
@@ -42,8 +43,9 @@ async function MyBooksContent() {
     
     const user = await requireCurrentUser();
 
+    const token: string = await getTokenFromServer();
     await io();
-    const { books, error } = await getBooksByOwner(user.email);
+    const { books, error } = await getBooksByOwner(user.email, token);
 
     return (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">

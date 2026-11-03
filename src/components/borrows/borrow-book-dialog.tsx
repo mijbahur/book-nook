@@ -20,6 +20,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { bookFieldClassName } from "@/components/books/book-fields";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const LOAN_DAYS = 14;
 
@@ -45,7 +46,9 @@ export function BorrowBookDialog({ book, user }: BorrowBookDialogProps) {
 
     const dueDate = addDays(new Date(), LOAN_DAYS);
 
+    
     const handleConfirm = async () => {
+        const token = await getTokenFromClient();
         setIsSubmitting(true);
 
         try {
@@ -55,7 +58,9 @@ export function BorrowBookDialog({ book, user }: BorrowBookDialogProps) {
                 bookImage: book.image,
                 userName: user.name,
                 userEmail: user.email,
-            });
+                
+
+            }, token);
 
             toast.success(
                 `You borrowed “${book.title}”. Please return it by ${dateFormatter.format(new Date(borrow.returnDate))}.`,
@@ -79,7 +84,7 @@ export function BorrowBookDialog({ book, user }: BorrowBookDialogProps) {
                 render={
                     <Button
                         size="lg"
-                        className="h-11 rounded-full px-6"
+                        className="h-11 rounded-full px-6 cursor-pointer"
                         aria-label={`Borrow ${book.title}`}
                     />
                 }
@@ -147,6 +152,7 @@ export function BorrowBookDialog({ book, user }: BorrowBookDialogProps) {
                     <DialogClose
                         render={
                             <Button
+                                className="cursor-pointer"
                                 type="button"
                                 variant="outline"
                                 size="lg"
@@ -157,6 +163,7 @@ export function BorrowBookDialog({ book, user }: BorrowBookDialogProps) {
                         Cancel
                     </DialogClose>
                     <Button
+                        className="cursor-pointer"
                         type="button"
                         size="lg"
                         onClick={handleConfirm}

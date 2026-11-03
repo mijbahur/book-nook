@@ -9,6 +9,7 @@ import { requireCurrentUser } from "@/lib/current-user";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MyBorrowsTable } from "@/components/borrows/my-borrows-table";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 export const metadata: Metadata = {
     title: "My Borrows",
@@ -39,11 +40,12 @@ function MyBorrowsSkeleton() {
 }
 
 async function MyBorrowsContent() {
-    // Private route: nothing below renders for a signed-out visitor.
+    
+    const token: string = await getTokenFromServer();
     const user = await requireCurrentUser();
 
     await io();
-    const { borrows, error } = await getBorrowsByUser(user.email);
+    const { borrows, error } = await getBorrowsByUser(user.email, token);
 
     return (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">

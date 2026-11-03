@@ -189,6 +189,7 @@ export function MyBorrowsTable({ user, borrows }: MyBorrowsTableProps) {
                                     <td className="px-4 py-3">
                                         <div className="flex justify-end">
                                             <Button
+                                                className="cursor-pointer"
                                                 variant="outline"
                                                 size="lg"
                                                 onClick={() =>
