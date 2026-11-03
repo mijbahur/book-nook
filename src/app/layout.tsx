@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn(
         "h-full",
         "antialiased",
@@ -47,10 +49,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
     >
       <body className="flex min-h-full flex-col">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <Toaster position="top-center" richColors closeButton />
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <Toaster position="top-center" richColors closeButton />
+        </ThemeProvider>
       </body>
     </html>
   );

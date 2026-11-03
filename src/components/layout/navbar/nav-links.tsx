@@ -7,9 +7,9 @@ import { SheetClose } from "@/components/ui/sheet";
 const links = [
     { href: "/", label: "Home", active: true },
     { href: "/books", label: "All Books", active: true },
+    { href: "/add-book", label: "Add Book", active: false },
     { href: "/my-books", label: "My Books", active: false },
     { href: "/my-borrows", label: "My Borrows", active: false },
-    { href: "/add-book", label: "Add Book", active: false },
 ];
 
 type NavLinksProps = {

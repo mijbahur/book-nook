@@ -5,6 +5,7 @@ import { Menu } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { NavLinks } from "@/components/layout/navbar/nav-links";
 import { AuthActions } from "@/components/layout/navbar/auth-actions";
+import ThemeBtn from "@/components/themeBtn";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -63,38 +64,50 @@ export function Navbar() {
                     <Logo />
                     <NavLinks isLoggedIn={Boolean(user)} />
 
-                    <AuthActions user={user} refetch={refetch} />
+                    <div className="flex gap-2">
+                        <div className="flex items-center gap-1">
+                            <ThemeBtn />
 
-                    {/* Mobile Navigation */}
-                    <Sheet>
-                        <SheetTrigger
-                            render={
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="md:hidden cursor-pointer"
-                                    aria-label="Open navigation menu"
-                                />
-                            }
-                        >
-                            <Menu className="size-5" />
-                        </SheetTrigger>
+                            {/* Mobile Navigation */}
+                            <Sheet>
+                                <SheetTrigger
+                                    render={
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="md:hidden cursor-pointer"
+                                            aria-label="Open navigation menu"
+                                        />
+                                    }
+                                >
+                                    <Menu className="size-5" />
+                                </SheetTrigger>
 
-                        <SheetContent
-                            side="right"
-                            className="flex w-[min(20rem,85vw)] flex-col"
-                        >
-                            <SheetHeader className="border-b">
-                                <SheetTitle>
-                                    <Logo />
-                                </SheetTitle>
-                            </SheetHeader>
+                                <SheetContent
+                                    side="right"
+                                    className="flex w-[min(20rem,85vw)] flex-col"
+                                >
+                                    <SheetHeader className="border-b">
+                                        <SheetTitle>
+                                            <Logo />
+                                        </SheetTitle>
+                                    </SheetHeader>
 
-                            <NavLinks mobile isLoggedIn={Boolean(user)} />
+                                    <NavLinks
+                                        mobile
+                                        isLoggedIn={Boolean(user)}
+                                    />
 
-                            <AuthActions user={user} refetch={refetch} mobile />
-                        </SheetContent>
-                    </Sheet>
+                                    <AuthActions
+                                        user={user}
+                                        refetch={refetch}
+                                        mobile
+                                    />
+                                </SheetContent>
+                            </Sheet>
+                        </div>
+                        <AuthActions user={user} refetch={refetch} />
+                    </div>
                 </div>
             )}
         </header>

@@ -105,7 +105,7 @@ export function Footer() {
                         <li>
                             <Link
                                 className="hover:text-foreground"
-                                href="/register"
+                                href="/signup"
                             >
                                 Register
                             </Link>
