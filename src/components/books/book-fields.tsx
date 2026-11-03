@@ -89,7 +89,7 @@ export function BookFields({
                     />
                 </label>
 
-                <label className="text-sm font-medium" htmlFor={id("category")}>
+                <label className="text-sm font-medium"  htmlFor={id("category")}>
                     Category
                     <select
                         className={bookFieldClassName}

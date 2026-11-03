@@ -36,6 +36,10 @@ export function AuthActions({
 }: AuthActionsProps) {
     const router = useRouter();
 
+    const handleEditProfile = () => {
+        toast("Edit profile is coming soon.");
+    };
+
     const handleSignOut = async () => {
         const { error } = await authClient.signOut();
 
@@ -139,6 +143,10 @@ export function AuthActions({
                         render={
                             <Link
                                 href="/profile"
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    handleEditProfile();
+                                }}
                                 className={buttonVariants({
                                     variant: "outline",
                                     size: "lg",
@@ -192,15 +200,15 @@ export function AuthActions({
                             <p className="text-sm text-muted-foreground">
                                 {user.email}
                             </p>
-                            <Link
-                                href="/profile"
-                                className={buttonVariants({
-                                    variant: "outline",
-                                    size: "sm",
-                                })}
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={handleEditProfile}
+                                className="cursor-pointer"
                             >
                                 Edit Profile
-                            </Link>
+                            </Button>
                             <Button
                                 variant="destructive"
                                 size="sm"

@@ -73,6 +73,7 @@ export function DeleteBookDialog({
                         render={
                             <Button
                                 type="button"
+                                className="cursor-pointer"
                                 variant="outline"
                                 size="lg"
                                 disabled={isDeleting}
@@ -83,6 +84,7 @@ export function DeleteBookDialog({
                     </DialogClose>
                     <Button
                         type="button"
+                        className="cursor-pointer"
                         variant="destructive"
                         size="lg"
                         onClick={handleConfirm}

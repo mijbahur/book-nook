@@ -190,16 +190,22 @@ const SignUpPage = () => {
                                     onChange={(event) =>
                                         update("password", event.target.value)
                                     }
-                                    minLength={8}
+                                    minLength={6}
+                                    pattern="(?=.*[A-Z])(?=.*[a-z]).{6,}"
+                                    title="Use at least 6 characters, including an uppercase and a lowercase letter."
                                     required
                                 />
                             </div>
+                            <p className="text-xs text-muted-foreground">
+                                Use at least 6 characters, including an
+                                uppercase and a lowercase letter.
+                            </p>
                         </div>
 
                         <Button
                             type="submit"
                             size="lg"
-                            className="h-11 w-full rounded-full"
+                            className="h-11 w-full rounded-full cursor-pointer"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (

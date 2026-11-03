@@ -114,12 +114,13 @@ export function EditBookDialog({
                                     variant="outline"
                                     size="lg"
                                     disabled={isSaving}
+                                    className="cursor-pointer"
                                 />
                             }
                         >
                             Cancel
                         </DialogClose>
-                        <Button type="submit" size="lg" disabled={isSaving}>
+                        <Button type="submit" size="lg" disabled={isSaving} className="cursor-pointer">
                             {isSaving ? (
                                 <>
                                     <LoaderCircle

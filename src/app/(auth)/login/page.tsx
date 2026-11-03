@@ -99,7 +99,20 @@ const LoginPage = () => {
 
                         {/* Password */}
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="password">Password</Label>
+                                <Button
+                                    type="button"
+                                    variant="link"
+                                    size="sm"
+                                    className="h-auto cursor-pointer p-0 text-xs"
+                                    onClick={() =>
+                                        toast("Password reset is coming soon.")
+                                    }
+                                >
+                                    Forgot password?
+                                </Button>
+                            </div>
                             <div className="relative">
                                 <LockKeyhole
                                     className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"

@@ -162,6 +162,7 @@ export function MyBooksTable({ user, books }: MyBooksTableProps) {
                                         <div className="flex items-center justify-end gap-2">
                                             <Button
                                                 variant="outline"
+                                                className="cursor-pointer"
                                                 size="lg"
                                                 onClick={() =>
                                                     setEditingBook(book)
@@ -178,6 +179,7 @@ export function MyBooksTable({ user, books }: MyBooksTableProps) {
                                             </Button>
                                             <Button
                                                 variant="destructive"
+                                                className="cursor-pointer"
                                                 size="lg"
                                                 onClick={() =>
                                                     setDeletingBook(book)

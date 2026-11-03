@@ -115,7 +115,7 @@ export function AddBookForm({ user }: AddBookFormProps) {
                         <Button
                             type="submit"
                             size="lg"
-                            className="w-full sm:w-auto"
+                            className="w-full sm:w-auto cursor-pointer"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
