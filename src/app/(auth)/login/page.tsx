@@ -25,8 +25,6 @@ const LoginPage = () => {
             password: string;
         };
 
-        console.log("formData", formData);
-        console.log("user", user);
 
         setIsSubmitting(true);
 

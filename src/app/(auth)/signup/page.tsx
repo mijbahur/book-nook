@@ -45,14 +45,9 @@ const SignUpPage = () => {
             password: string;
         };
 
-        console.log("formData", formData);
-        console.log("user", user);
-
         const { data, error } = await authClient.signUp.email({
             ...user,
         });
-
-        console.log(data);
 
         setIsSubmitting(false);
 

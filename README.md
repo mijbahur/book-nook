@@ -91,13 +91,13 @@ Browser
   │
   └── External books/borrows REST API (NEXT_PUBLIC_API_URL)
         ├── GET    /books
-        ├── GET    /book/:id
-        ├── POST   /add-book
-        ├── PATCH  /book/:id
-        ├── DELETE /book/:id
+        ├── GET    /books/:id
+        ├── POST   /books
+        ├── PATCH  /books/:id
+        ├── DELETE /books/:id
         ├── POST   /borrows
-        ├── GET    /borrows?userEmail=...
-        └── DELETE /borrow/:id
+        ├── GET    /borrows
+        └── DELETE /borrows/:id
 ```
 
 - **Server Components** read books and borrows directly with a server-issued JWT (`getTokenFromServer`).
@@ -207,18 +207,18 @@ The frontend expects an Express-like REST API at `NEXT_PUBLIC_API_URL`. Reads of
 | Method   | Endpoint                | Auth | Purpose                                  |
 | -------- | ----------------------- | :--: | ---------------------------------------- |
 | `GET`    | `/books`                |  —   | List books. Supports `limit`, `sort`, `ownerEmail` |
-| `GET`    | `/book/:id`             |  —   | Fetch a single book                      |
-| `POST`   | `/add-book`             |  ✅  | Create a book                            |
-| `PATCH`  | `/book/:id`             |  ✅  | Update a book                            |
-| `DELETE` | `/book/:id`             |  ✅  | Delete a book                            |
+| `GET`    | `/books/:id`            |  —   | Fetch a single book                      |
+| `POST`   | `/books`                |  ✅  | Create a book                            |
+| `PATCH`  | `/books/:id`            |  ✅  | Update a book                            |
+| `DELETE` | `/books/:id`            |  ✅  | Delete a book                            |
 
 ### Borrows
 
 | Method   | Endpoint                     | Auth | Purpose                                  |
 | -------- | ---------------------------- | :--: | ---------------------------------------- |
 | `POST`   | `/borrows`                   |  ✅  | Borrow one copy of a book                |
-| `GET`    | `/borrows?userEmail=<email>` |  ✅  | List the signed-in reader's active loans |
-| `DELETE` | `/borrow/:id`                |  ✅  | Return a book                            |
+| `GET`    | `/borrows`                   |  ✅  | List the signed-in reader's active loans |
+| `DELETE` | `/borrows/:id`               |  ✅  | Return a book                            |
 
 Borrow dates are computed on the server: `borrowDate` is "now" and `returnDate` is the due date, 14 days later. The browser never sends them, so a reader cannot extend their own deadline.
 

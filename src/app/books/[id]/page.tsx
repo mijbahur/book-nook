@@ -1,8 +1,9 @@
 import { Metadata } from "next";
 import { ArrowLeft, BookOpen, Library, Loader2, UserRound } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getBookById } from "@/lib/books";
+import { getBookById, getBorrowsByUser } from "@/lib/books";
 import { getCurrentUser, isBookOwner } from "@/lib/current-user";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 import { io } from "next/cache";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -47,6 +48,14 @@ async function BookDetail({ params }: { params: Promise<{ id: string }> }) {
     if (!book) {
         notFound();
     }
+
+    const borrowStatus = user
+        ? await getBorrowsByUser(user.email, await getTokenFromServer())
+        : { borrows: [], error: false };
+    const alreadyBorrowed = borrowStatus.borrows.some(
+        (borrow) => borrow.bookId === book._id,
+    );
+
     return (
         <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
             <Link
@@ -134,11 +143,29 @@ async function BookDetail({ params }: { params: Promise<{ id: string }> }) {
                             <Button
                                 size="lg"
                                 variant="outline"
-                                className="h-11 rounded-full px-6 bg-card"
+                                className="h-11 rounded-full px-6 bg-card cursor-pointer"
                                 disabled
                             >
                                 <BookOpen className="size-4" aria-hidden="true" />
                                 This is your book
+                            </Button>
+                        ) : borrowStatus.error ? (
+                            <Button
+                                size="lg"
+                                className="h-11 rounded-full px-6 cursor-pointer"
+                                disabled
+                            >
+                                <BookOpen className="size-4" aria-hidden="true" />
+                                Could not check borrow status
+                            </Button>
+                        ) : alreadyBorrowed ? (
+                            <Button
+                                size="lg"
+                                className="h-11 rounded-full px-6 cursor-pointer"
+                                disabled
+                            >
+                                <BookOpen className="size-4" aria-hidden="true" />
+                                You already borrowed this book
                             </Button>
                         ) : book.totalCopies < 1 ? (
                             <Button

@@ -63,7 +63,7 @@ function DialogContent({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="absolute top-3 right-3"
+                className="absolute top-3 right-3 cursor-pointer"
               />
             }
           >

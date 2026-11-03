@@ -121,6 +121,10 @@
   * {
     @apply border-border outline-ring/50;
   }
+  a,
+  button:not(:disabled) {
+    cursor: pointer;
+  }
   body {
     @apply bg-background text-foreground;
   }
@@ -146,6 +150,7 @@
 .hero-swiper .swiper-pagination-bullet {
   width: 0.5rem;
   height: 0.5rem;
+  cursor: pointer;
   background: white;
   opacity: 0.55;
   transition: width 200ms ease, opacity 200ms ease;
@@ -161,6 +166,7 @@
 .hero-swiper .swiper-button-prev {
   width: 2.75rem;
   height: 2.75rem;
+  cursor: pointer;
   border: 1px solid rgb(255 255 255 / 35%);
   border-radius: 9999px;
   background: rgb(0 0 0 / 20%);
