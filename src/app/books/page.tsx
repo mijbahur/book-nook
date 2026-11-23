@@ -1,26 +1,33 @@
-import Link from "next/link";
-import { BookOpen, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import type { Metadata } from "next";
 import { io } from "next/cache";
 import { Suspense } from "react";
 
-import { BookCard } from "@/components/books/book-card";
+import { BookExplorer } from "@/components/books/book-explorer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAllBooks } from "@/lib/books";
 import { BOOK_CATEGORIES, type BookCategory } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
     title: "All Books",
     description:
-        "Browse every book on the BookNook shelves, filtered by category.",
+        "Search, filter, and sort every book on the BookNook shelves.",
 };
 
 type BooksPageProps = {
-    searchParams: Promise<{ category?: string | string[] }>;
+    searchParams: Promise<{
+        category?: string | string[];
+        q?: string | string[];
+        sort?: string | string[];
+    }>;
 };
 
 type CategoryFilter = BookCategory | "All";
+type BookSort = "title-asc" | "title-desc";
+
+function firstValue(value: string | string[] | undefined): string | undefined {
+    return Array.isArray(value) ? value[0] : value;
+}
 
 function parseCategory(
     value: string | string[] | undefined,
@@ -34,29 +41,8 @@ function parseCategory(
     );
 }
 
-function FilterPill({
-    label,
-    href,
-    active,
-}: {
-    label: string;
-    href: string;
-    active: boolean;
-}) {
-    return (
-        <Link
-            href={href}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-                "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
-                active
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border/70 bg-card text-foreground hover:bg-muted",
-            )}
-        >
-            {label}
-        </Link>
-    );
+function parseSort(value: string | string[] | undefined): BookSort {
+    return firstValue(value) === "title-desc" ? "title-desc" : "title-asc";
 }
 
 function BooksSkeleton() {
@@ -98,18 +84,11 @@ async function BooksContent({
 }: {
     searchParams: BooksPageProps["searchParams"];
 }) {
-    // const res = await fetch("http://localhost:8000/books");
-    // const data = await res.json();
-    const { category } = await searchParams;
-    const activeCategory = parseCategory(category);
+    const { category, q, sort } = await searchParams;
+    const query = firstValue(q)?.trim() ?? "";
 
     await io();
     const { books, error } = await getAllBooks();
-
-    const visibleBooks =
-        activeCategory === "All"
-            ? books
-            : books.filter((book) => book.category === activeCategory);
 
     return (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -122,62 +101,18 @@ async function BooksContent({
                 </h1>
                 <p className="text-muted-foreground">
                     Browse every title on the shelf, or narrow the collection
-                    by category.
+                    by category, search, or sort titles alphabetically.
                 </p>
             </div>
 
-            <div
-                className="mb-10 flex flex-wrap gap-2"
-                role="group"
-                aria-label="Filter books by category"
-            >
-                <FilterPill
-                    label="All"
-                    href="/books"
-                    active={activeCategory === "All"}
-                />
-                {BOOK_CATEGORIES.map((category) => (
-                    <FilterPill
-                        key={category}
-                        label={category}
-                        href={`/books?category=${category}`}
-                        active={activeCategory === category}
-                    />
-                ))}
-            </div>
-
-            {error ? (
-                <div className="rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center">
-                    <BookOpen className="mx-auto mb-4 size-10 text-muted-foreground" />
-                    <h2 className="font-heading text-xl font-semibold">
-                        We could not open the shelves
-                    </h2>
-                    <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-                        Please refresh the page and try again.
-                    </p>
-                </div>
-            ) : visibleBooks.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-border bg-card px-6 py-16 text-center">
-                    <BookOpen className="mx-auto mb-4 size-10 text-muted-foreground" />
-                    <h2 className="font-heading text-xl font-semibold">
-                        Nothing on this shelf yet
-                    </h2>
-                    <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-                        No {activeCategory === "All" ? "" : `${activeCategory} `}
-                        books have been shared so far.
-                    </p>
-                </div>
-            ) : (
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {visibleBooks.map((book, index) => (
-                        <BookCard
-                            key={book._id}
-                            book={book}
-                            priority={index < 3}
-                        />
-                    ))}
-                </div>
-            )}
+            <BookExplorer
+                books={books}
+                categories={BOOK_CATEGORIES}
+                initialCategory={parseCategory(category)}
+                initialQuery={query}
+                initialSort={parseSort(sort)}
+                error={error}
+            />
         </section>
     );
 }

@@ -1,0 +1,2 @@
+export const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+// This is the base URL for the API. It can be set in the environment variables or defaults to localhost for development purposes.
